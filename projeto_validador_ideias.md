@@ -1,11 +1,11 @@
 # Validador de Ideia de Negócio com IA
-### Mini-Projeto Avaliativo — Três versões por nível de senioridade
+### Mini-Projeto Avaliativo - Três versões por nível de senioridade
 
 > **Ideia:** O usuário descreve uma ideia de negócio e a IA retorna uma análise estruturada com: problema que resolve, público-alvo, concorrência básica e pontos de atenção.
 
 ---
 
-## Versão 1 — Iniciante
+## Versão 1 - Iniciante
 
 ### Descrição geral
 Página web estática com formulário onde o usuário digita sua ideia. Ao submeter, a aplicação envia o texto para a API do OpenAI e exibe a análise gerada diretamente na tela. Foco em funcionar, documentar e participar.
@@ -65,7 +65,7 @@ Ideia: {ideia do usuário}
 - Escolhas técnicas (por que HTML/JS vanilla, por que GPT-3.5-turbo).
 - Link para os prompts documentados.
 
-> **Limitação conhecida — segurança:** Nesta versão a chave de API é configurada diretamente no código JavaScript do cliente, ficando exposta ao navegador. Isso deve ser documentado como limitação no README e em `docs/VIABILIDADE.md` (ou PRD). A solução adequada seria um backend intermediário — implementada nas versões Intermediária e Avançada.
+> **Limitação conhecida - segurança:** Nesta versão a chave de API é configurada diretamente no código JavaScript do cliente, ficando exposta ao navegador. Isso deve ser documentado como limitação no README e em `docs/VIABILIDADE.md` (ou PRD). A solução adequada seria um backend intermediário - implementada nas versões Intermediária e Avançada.
 
 ### Fluxograma (texto)
 ```
@@ -97,7 +97,7 @@ Exibe análise formatada na tela
 
 ---
 
-## Versão 2 — Intermediário
+## Versão 2 - Intermediário
 
 ### Descrição geral
 Aplicação web full-stack com backend em Node.js/Express. O frontend React envia a ideia ao backend, que monta o prompt, chama a API do OpenAI e retorna a análise estruturada em JSON. O histórico de validações é salvo no `localStorage`. Foco em integração real de IA no produto, versionamento profissional e documentação completa.
@@ -204,7 +204,7 @@ Ideia: {ideia do usuário}
 
 ---
 
-## Versão 3 — Avançado
+## Versão 3 - Avançado
 
 ### Descrição geral
 Aplicação web full-stack com arquitetura orientada a agentes. O usuário descreve sua ideia; um orquestrador divide a análise em três agentes especializados (Problema & Mercado, Viabilidade Técnica, Análise Financeira Inicial) que chamam a API de forma independente. Os resultados são consolidados e apresentados em um dashboard com histórico persistido em banco de dados. Foco em prompt engineering intencional, arquitetura robusta e análise técnica aprofundada.
@@ -214,7 +214,7 @@ Aplicação web full-stack com arquitetura orientada a agentes. O usuário descr
 |---|---|
 | Frontend | React (Vite) + TailwindCSS |
 | Backend | Node.js + Express |
-| IA | OpenAI API (gpt-4o) — arquitetura multi-agente |
+| IA | OpenAI API (gpt-4o) - arquitetura multi-agente |
 | Banco de Dados | SQLite (via Prisma ORM) |
 | Testes | Jest + Supertest + Testing Library |
 | Autenticação | JWT (token simples para proteger a API) |
@@ -297,7 +297,7 @@ Persiste no banco de dados
 Exibe dashboard com score e recomendações
 ```
 
-### Prompt engineering — exemplos por agente
+### Prompt engineering - exemplos por agente
 
 **Agente de Mercado:**
 ```
@@ -398,7 +398,7 @@ Deve conter:
 |---|---|
 | Convenção de commits por todos | Commits semânticos (`feat:`, `fix:`, `docs:`) em todos os membros, rastreáveis no histórico |
 | Justificativa técnica da IA | README e VIABILIDADE explicam por que GPT-4o e por que arquitetura de agentes |
-| IA essencial ao produto | Sem os agentes, o produto não existe — a análise é o core |
+| IA essencial ao produto | Sem os agentes, o produto não existe - a análise é o core |
 | Arquitetura + user stories + PRD | Pasta `docs/` completa com todos os artefatos |
 | UML | Diagrama de sequência + diagrama de classes em Mermaid |
 | Viabilidade aprofundada | Análise técnica, custo/benefício, limitações e próximos passos concretos |
