@@ -1,366 +1,366 @@
-# Product Requirements Document (PRD)
+# Documento de Requisitos do Produto (PRD)
 ## Validador de Ideia de Negócio - Versão 3 Avançado
 
-**Version:** 1.0  
-**Date:** 2026-05-19  
-**Status:** Ready for Implementation (Phase 0)  
-**Target Release:** End of Phase 7  
+**Versão:** 1.0  
+**Data:** 2026-05-19  
+**Status:** Pronto para Implementação (Fase 0)  
+**Lançamento Alvo:** Final da Fase 7  
 
 ---
 
-## 1. Vision & Problem Statement
+## 1. Visão e Declaração do Problema
 
-### Problem
-Entrepreneurs and startup founders spend significant time and money seeking feedback on their business ideas. Early-stage validation is often slow (consultants take weeks), expensive ($500–2000 per consultation), and biased (limited perspectives). Without structured analysis across multiple dimensions (market, technical, financial), founders risk pursuing non-viable ideas or missing critical constraints.
+### Problema
+Empreendedores e fundadores de startups gastam tempo e dinheiro significativos buscando feedback para suas ideias de negócio. A validação em estágio inicial costuma ser lenta (consultorias levam semanas), cara (US$ 500-2000 por consultoria) e enviesada (perspectivas limitadas). Sem uma análise estruturada em múltiplas dimensões (mercado, técnica e financeira), os fundadores correm o risco de seguir ideias inviáveis ou ignorar restrições críticas.
 
-### Solution
-A multi-agent AI system that provides **instant, structured analysis** of business ideas across three specialized dimensions:
-- **Market Analysis:** Problem-to-solve, target audience, market size, competition, differentiation
-- **Technical Viability:** Stack requirements, complexity level, IA integration points, technical limitations, MVP timeline
-- **Financial Feasibility:** Revenue model, operational costs (especially IA), financial viability score, next validation steps
+### Solução
+Um sistema de IA multiagente que fornece **análise instantânea e estruturada** de ideias de negócio em três dimensões especializadas:
+- **Análise de Mercado:** problema a resolver, público-alvo, tamanho de mercado, concorrência e diferenciação
+- **Viabilidade Técnica:** requisitos de stack, nível de complexidade, pontos de integração com IA, limitações técnicas e cronograma de MVP
+- **Viabilidade Financeira:** modelo de receita, custos operacionais (especialmente de IA), score de viabilidade financeira e próximos passos de validação
 
-### Why IA is Essential
-The product **does not exist without IA**. The core value is:
-1. **Speed:** Analysis in 10 seconds vs. weeks of consulting
-2. **Breadth:** Three specialized agents analyze in parallel, each from a different angle
-3. **Accessibility:** Founder gets professional-grade analysis at zero cost
-4. **Consistency:** Same criteria applied to every idea; no subjective consultant bias
-
----
-
-## 2. Target Users & Use Cases
-
-### Primary User Persona
-- **Name:** Sofia (Entrepreneur/Founder)
-- **Age:** 25–45
-- **Background:** Early-stage startup founder, career-changer, or side-project validation
-- **Pain Point:** Needs rapid feedback before investing time/money; cannot afford consultants
-- **Goal:** Validate business idea in < 5 minutes; compare multiple idea variants
-
-### Use Cases
-
-**UC1: First-Time Validation**
-- Sofia has a rough business idea
-- She logs in, describes the idea in 200+ words
-- System returns analysis across market, tech, financial dimensions
-- She reads the report, identifies the most critical risks, and decides to pivot or double down
-
-**UC2: Idea Comparison**
-- Sofia has 3 competing ideas
-- She validates each one separately
-- She reviews the history view, comparing scores and recommendations
-- She shares the analysis with a co-founder (future enhancement: export as PDF)
-
-**UC3: Feedback Loop**
-- Sofia gets initial analysis, incorporates feedback, and refines her idea
-- She re-validates the updated idea weeks later
-- She compares the two analyses to see improvement in viability scores
+### Por que a IA é Essencial
+O produto **não existe sem IA**. O valor central é:
+1. **Velocidade:** análise em 10 segundos versus semanas de consultoria
+2. **Amplitude:** três agentes especializados analisam em paralelo, cada um por um ângulo diferente
+3. **Acessibilidade:** o fundador recebe análise em nível profissional a custo zero
+4. **Consistência:** os mesmos critérios são aplicados a toda ideia; sem viés subjetivo de consultor
 
 ---
 
-## 3. Core Features & Acceptance Criteria
+## 2. Usuários-Alvo e Casos de Uso
 
-### Feature 1: User Authentication
-**Description:** Users can log in with an email address to access the platform and protect their analysis history.
+### Persona Principal
+- **Nome:** Sofia (Empreendedora/Fundadora)
+- **Idade:** 25-45
+- **Contexto:** fundadora em estágio inicial, em transição de carreira ou validando projeto paralelo
+- **Dor Principal:** precisa de feedback rápido antes de investir tempo/dinheiro; não pode pagar consultorias
+- **Objetivo:** validar ideia de negócio em < 5 minutos e comparar variações de ideia
 
-**Acceptance Criteria:**
-- [ ] User can enter email on login page
-- [ ] Valid JWT token is generated and stored in localStorage
-- [ ] Token expires after 7 days of inactivity
-- [ ] Unauthenticated users cannot access `/dashboard` (redirected to login)
-- [ ] API endpoints reject requests without valid token (401 Unauthorized)
+### Casos de Uso
 
-**User Story:** As a user, I want to securely access my idea history so that my analyses remain private and persistent.
+**UC1: Primeira Validação**
+- Sofia tem uma ideia de negócio inicial
+- Ela faz login e descreve a ideia em 200+ palavras
+- O sistema retorna análise nas dimensões de mercado, técnica e financeira
+- Ela lê o relatório, identifica os riscos mais críticos e decide pivotar ou seguir adiante
 
----
+**UC2: Comparação de Ideias**
+- Sofia tem 3 ideias concorrentes
+- Ela valida cada uma separadamente
+- Ela revisa o histórico comparando scores e recomendações
+- Ela compartilha a análise com um cofundador (melhoria futura: exportar PDF)
 
-### Feature 2: Idea Submission & Multi-Agent Analysis
-**Description:** Authenticated users submit a business idea. Three specialized agents (Market, Technical, Financial) analyze it in parallel and return structured JSON responses.
-
-**Acceptance Criteria:**
-- [ ] Frontend form accepts idea description (min. 100 characters)
-- [ ] Form validates input and shows clear error messages
-- [ ] `POST /api/validar` accepts JSON with `{ ideia: string }`
-- [ ] Backend orchestrator spawns 3 agents in parallel using Promise.all()
-- [ ] Each agent calls OpenAI API with specialized prompt (Merchant, Technical, Financial)
-- [ ] API consolidates responses into single JSON object within 15 seconds
-- [ ] If 1–2 agents fail, response returns 200 with partial results + error field
-- [ ] Response includes timestamp, userId, ideaHash, and consolidated analysis
-- [ ] Frontend displays results in dashboard with clear visual hierarchy
-
-**User Story:** As a founder, I want to submit my idea and receive analysis across market, technical, and financial dimensions so that I can make an informed decision about feasibility.
+**UC3: Ciclo de Feedback**
+- Sofia recebe a análise inicial, incorpora feedback e refina a ideia
+- Ela revalida a ideia atualizada semanas depois
+- Ela compara as duas análises para verificar melhora nos scores de viabilidade
 
 ---
 
-### Feature 3: Dashboard Display
-**Description:** Analysis results are displayed in an organized, visually-clear dashboard with scores, key findings, and recommendations.
+## 3. Funcionalidades Principais e Critérios de Aceite
 
-**Acceptance Criteria:**
-- [ ] Dashboard displays all three agent analyses side-by-side
-- [ ] Each agent section shows JSON fields in human-readable format
-- [ ] Color coding indicates viability scores (green=alta, yellow=media, red=baixa)
-- [ ] User can see key recommendations from each agent
-- [ ] Display is responsive (mobile, tablet, desktop)
-- [ ] User can click to expand/collapse each agent's full response
-- [ ] Loading indicator shown while agents process (max 15 seconds)
+### Funcionalidade 1: Autenticação de Usuário
+**Descrição:** Usuários podem fazer login com endereço de e-mail para acessar a plataforma e proteger seu histórico de análises.
 
-**User Story:** As a user, I want to see the analysis results in a clear, organized format so that I can quickly understand the key findings and next steps.
+**Critérios de Aceite:**
+- [ ] Usuário consegue inserir e-mail na tela de login
+- [ ] Token JWT válido é gerado e armazenado no localStorage
+- [ ] Token expira após 7 dias de inatividade
+- [ ] Usuários não autenticados não acessam `/dashboard` (redirecionamento para login)
+- [ ] Endpoints da API rejeitam requisições sem token válido (401 Unauthorized)
 
----
-
-### Feature 4: History & Persistence
-**Description:** All validations are persisted in SQLite and displayed in a history view, allowing users to compare and revisit past analyses.
-
-**Acceptance Criteria:**
-- [ ] Each validation is stored in database with userId, ideaText, timestamp, and all agent responses
-- [ ] History view lists all past validations, newest first
-- [ ] User can click to view full analysis of any past validation
-- [ ] User can delete individual validations
-- [ ] User can clear all history with confirmation dialog
-- [ ] Search/filter by idea text (case-insensitive substring match)
-- [ ] History persists across sessions and multiple devices (same email)
-
-**User Story:** As a recurring user, I want to access my analysis history so that I can compare ideas, track improvement, and revisit recommendations.
+**User Story:** Como usuário, quero acessar com segurança meu histórico de ideias para que minhas análises permaneçam privadas e persistentes.
 
 ---
 
-### Feature 5: Error Handling & Resilience
-**Description:** Graceful handling of API failures, timeouts, and invalid responses.
+### Funcionalidade 2: Envio de Ideia e Análise Multiagente
+**Descrição:** Usuários autenticados enviam uma ideia de negócio. Três agentes especializados (Mercado, Técnico e Financeiro) analisam em paralelo e retornam respostas JSON estruturadas.
 
-**Acceptance Criteria:**
-- [ ] Network timeout shows user-friendly error message (not JSON dump)
-- [ ] Invalid OpenAI API response (non-JSON, malformed) shows error field in consolidation
-- [ ] If 3/3 agents fail, API returns 200 with error state (not 500)
-- [ ] Rate limit (OpenAI quota exceeded) shows clear message with wait suggestion
-- [ ] Database errors logged but do not block response (returns 200 with warning)
-- [ ] All errors include recommendation for next action (retry, contact support, etc.)
+**Critérios de Aceite:**
+- [ ] Formulário do frontend aceita descrição da ideia (mín. 100 caracteres)
+- [ ] Formulário valida entrada e mostra mensagens de erro claras
+- [ ] `POST /api/validar` aceita JSON com `{ ideia: string }`
+- [ ] Orquestrador de backend dispara 3 agentes em paralelo usando Promise.all()
+- [ ] Cada agente chama a API da OpenAI com prompt especializado (Mercado, Técnico e Financeiro)
+- [ ] API consolida respostas em um único objeto JSON em até 15 segundos
+- [ ] Se 1-2 agentes falharem, a resposta retorna 200 com resultado parcial + campo de erro
+- [ ] Resposta inclui timestamp, userId, ideaHash e análise consolidada
+- [ ] Frontend exibe resultados em dashboard com hierarquia visual clara
 
-**User Story:** As a user, I want the app to handle errors gracefully so that I can understand what went wrong and what to do next.
+**User Story:** Como fundadora, quero enviar minha ideia e receber análise nas dimensões de mercado, técnica e financeira para tomar uma decisão informada sobre viabilidade.
 
 ---
 
-## 4. Non-Functional Requirements
+### Funcionalidade 3: Exibição no Dashboard
+**Descrição:** Os resultados de análise são exibidos em um dashboard organizado, visualmente claro, com scores, principais achados e recomendações.
+
+**Critérios de Aceite:**
+- [ ] Dashboard exibe as análises dos três agentes lado a lado
+- [ ] Cada seção de agente mostra campos JSON em formato legível
+- [ ] Código de cores indica scores de viabilidade (verde=alta, amarelo=media, vermelho=baixa)
+- [ ] Usuário consegue ver recomendações-chave de cada agente
+- [ ] Exibição é responsiva (mobile, tablet, desktop)
+- [ ] Usuário pode expandir/recolher resposta completa de cada agente
+- [ ] Indicador de loading é exibido enquanto agentes processam (máx. 15 segundos)
+
+**User Story:** Como usuário, quero ver os resultados da análise em formato claro e organizado para entender rapidamente os principais achados e próximos passos.
+
+---
+
+### Funcionalidade 4: Histórico e Persistência
+**Descrição:** Todas as validações são persistidas em SQLite e exibidas em uma visualização de histórico, permitindo comparar e revisitar análises anteriores.
+
+**Critérios de Aceite:**
+- [ ] Cada validação é armazenada no banco com userId, ideaText, timestamp e respostas de todos os agentes
+- [ ] Histórico lista todas as validações anteriores, da mais nova para a mais antiga
+- [ ] Usuário pode clicar para ver análise completa de qualquer validação passada
+- [ ] Usuário pode excluir validações individuais
+- [ ] Usuário pode limpar todo o histórico com diálogo de confirmação
+- [ ] Busca/filtro por texto da ideia (substring case-insensitive)
+- [ ] Histórico persiste entre sessões e múltiplos dispositivos (mesmo e-mail)
+
+**User Story:** Como usuário recorrente, quero acessar meu histórico de análises para comparar ideias, acompanhar evolução e revisitar recomendações.
+
+---
+
+### Funcionalidade 5: Tratamento de Erros e Resiliência
+**Descrição:** Tratamento elegante para falhas de API, timeouts e respostas inválidas.
+
+**Critérios de Aceite:**
+- [ ] Timeout de rede mostra mensagem amigável ao usuário (não dump de JSON)
+- [ ] Resposta inválida da API OpenAI (não-JSON, malformada) mostra campo de erro na consolidação
+- [ ] Se 3/3 agentes falharem, API retorna 200 com estado de erro (não 500)
+- [ ] Rate limit (quota OpenAI excedida) mostra mensagem clara com sugestão de espera
+- [ ] Erros de banco são registrados, mas não bloqueiam resposta (retorna 200 com warning)
+- [ ] Todo erro inclui recomendação de próximo passo (tentar novamente, suporte etc.)
+
+**User Story:** Como usuário, quero que o app trate erros com clareza para que eu entenda o que aconteceu e o que fazer a seguir.
+
+---
+
+## 4. Requisitos Não Funcionais
 
 ### Performance
-- API response time: < 15 seconds (3 agents in parallel)
-- Frontend load time: < 2 seconds (Vite optimized bundle)
-- Database queries: < 100ms (SQLite with proper indexing)
-- Search/filter: real-time response for < 1000 validations
+- Tempo de resposta da API: < 15 segundos (3 agentes em paralelo)
+- Tempo de carregamento do frontend: < 2 segundos (bundle otimizado com Vite)
+- Consultas ao banco: < 100ms (SQLite com indexação adequada)
+- Busca/filtro: resposta em tempo real para < 1000 validações
 
-### Scalability
-- Support 1000+ users in Phase 7 without major refactoring
-- Database can handle 10,000+ validations (SQLite adequate; migrate to PostgreSQL if needed post-Phase 7)
-- IA costs monitored per user and aggregated for financial planning
+### Escalabilidade
+- Suportar 1000+ usuários na Fase 7 sem grande refatoração
+- Banco suporta 10.000+ validações (SQLite adequado; migrar para PostgreSQL se necessário após Fase 7)
+- Custos de IA monitorados por usuário e agregados para planejamento financeiro
 
-### Security
-- JWT tokens: 7-day expiry, signed with HS256
-- API secrets (OpenAI key, JWT secret): stored in `.env`, never in code
-- Input validation: all user inputs sanitized server-side
-- CORS configured to allow only approved origins
-- No sensitive data logged to console in production
+### Segurança
+- Tokens JWT: expiração em 7 dias, assinatura HS256
+- Segredos de API (chave OpenAI, segredo JWT): armazenados em `.env`, nunca no código
+- Validação de entrada: todos os inputs de usuário sanitizados no servidor
+- CORS configurado para permitir apenas origens aprovadas
+- Nenhum dado sensível registrado em console em produção
 
-### Reliability
-- 99.5% uptime target (Phase 7 SLA)
-- Automated error monitoring (optional: Sentry integration in Phase 6+)
-- Database backups: daily (manual in Phase 1–4, automated in Phase 5+)
-- Health check endpoint: `GET /health` returns 200 if all systems OK
+### Confiabilidade
+- Meta de uptime de 99,5% (SLA da Fase 7)
+- Monitoramento automatizado de erros (opcional: integração com Sentry na Fase 6+)
+- Backups de banco: diários (manual nas Fases 1-4, automatizado na Fase 5+)
+- Endpoint de health check: `GET /health` retorna 200 se todos os sistemas estiverem OK
 
-### Accessibility
-- WCAG 2.1 AA compliance (keyboard navigation, color contrast, alt text)
-- Mobile-first responsive design (tested on iOS 14+, Android 10+)
-- Screen reader compatible (semantic HTML, ARIA labels)
+### Acessibilidade
+- Conformidade WCAG 2.1 AA (navegação por teclado, contraste de cores, texto alternativo)
+- Design responsivo mobile-first (testado em iOS 14+ e Android 10+)
+- Compatível com leitores de tela (HTML semântico, labels ARIA)
 
 ---
 
-## 5. Technical Approach & Architecture
+## 5. Abordagem Técnica e Arquitetura
 
-### Multi-Agent Orchestration Pattern
+### Padrão de Orquestração Multiagente
 ```
-User Input
+Entrada do Usuário
     ↓
-[Backend Orchestrator]
-    ↓ (parallel)
+[Orquestrador do Backend]
+    ↓ (paralelo)
 ┌────────────────┬────────────────┬──────────────────┐
-│ Mercado Agent  │ Técnico Agent  │ Financeiro Agent │
-│ (problem,      │ (stack,        │ (revenue model,  │
-│  audience,     │  complexity,   │  costs,          │
-│  competitors)  │  timeline)     │  viability)      │
+│ Agente Mercado │ Agente Técnico │ Agente Financeiro│
+│ (problema,     │ (stack,        │ (modelo de       │
+│  público,      │  complexidade, │  receita, custos,│
+│  concorrentes) │  cronograma)   │  viabilidade)    │
 └────────────────┴────────────────┴──────────────────┘
-    ↓ (consolidation)
-[Response Consolidation]
+    ↓ (consolidação)
+[Consolidação de Resposta]
     ↓
-Return 200 with JSON
-(or 200 with partial if 1–2 agents fail)
+Retorna 200 com JSON
+(ou 200 parcial se 1-2 agentes falharem)
 ```
 
-### Technology Rationale
-- **Node.js + Express:** Lightweight, non-blocking I/O perfect for parallel agent calls
-- **Prisma + SQLite:** Simple ORM, SQLite adequate for MVP phase; Prisma migrations easy
-- **React + Vite:** Modern frontend tooling; Vite fast dev experience and small bundles
-- **OpenAI gpt-4o-mini (dev), gpt-4o (production):** Best balance of speed + cost in gpt-4 family
-- **JWT (email-based):** Stateless auth; no sessions to manage; simple for MVP (email-only, no passwords)
-- **TailwindCSS:** Rapid UI development; utility-first; no CSS files to maintain
+### Justificativa Tecnológica
+- **Node.js + Express:** leve, I/O não bloqueante, ideal para chamadas paralelas de agentes
+- **Prisma + SQLite:** ORM simples, SQLite adequado para fase MVP; migrações Prisma facilitam evolução
+- **React + Vite:** stack moderna de frontend; Vite acelera desenvolvimento e reduz bundle
+- **OpenAI gpt-4o-mini (dev), gpt-4o (produção):** melhor equilíbrio entre velocidade e custo na família gpt-4
+- **JWT (baseado em e-mail):** autenticação stateless, sem sessão no servidor; simples para MVP (somente e-mail, sem senha)
+- **TailwindCSS:** desenvolvimento de UI rápido; abordagem utility-first; menor manutenção de CSS
 
 ---
 
-## 6. User Stories (Detailed)
+## 6. User Stories (Detalhadas)
 
-### User Story 1: Founder Validates Business Idea
-**As a** founder with a rough business idea  
-**I want to** submit my idea to an AI system and receive structured analysis across market, technical, and financial dimensions  
-**So that** I can make an informed decision about whether to pursue or pivot
+### User Story 1: Fundadora Valida Ideia de Negócio
+**Como** fundadora com uma ideia inicial de negócio  
+**Quero** enviar minha ideia para um sistema de IA e receber análise estruturada nas dimensões de mercado, técnica e financeira  
+**Para** tomar uma decisão informada sobre seguir ou pivotar
 
-**Acceptance Criteria:**
-- [ ] Login page accepts email and generates JWT token
-- [ ] Idea form has text area with character counter (min 100, max 5000 chars)
-- [ ] Submit button disabled until minimum length met
-- [ ] Loading spinner shown for up to 15 seconds
-- [ ] Dashboard displays all three agent results within 15 seconds
-- [ ] Results include "viabilidade" scores (baixa/media/alta) from financial agent
-- [ ] User can see specific recommendations from each agent
-- [ ] If any agent fails, partial results still shown with error message
+**Critérios de Aceite:**
+- [ ] Tela de login aceita e-mail e gera token JWT
+- [ ] Formulário de ideia possui textarea com contador de caracteres (mín. 100, máx. 5000)
+- [ ] Botão de envio fica desabilitado até atingir tamanho mínimo
+- [ ] Spinner de carregamento exibido por até 15 segundos
+- [ ] Dashboard exibe resultados dos três agentes em até 15 segundos
+- [ ] Resultados incluem score de "viabilidade" (baixa/media/alta) do agente financeiro
+- [ ] Usuário visualiza recomendações específicas de cada agente
+- [ ] Se algum agente falhar, resultados parciais ainda são exibidos com mensagem de erro
 
-**Linked Acceptance Criteria (from PRD):**
-- Feature 1: User Authentication (login required)
-- Feature 2: Idea Submission & Multi-Agent Analysis (core feature)
-- Feature 3: Dashboard Display (results presentation)
-- Feature 5: Error Handling (partial failures)
-
----
-
-### User Story 2: Recurring User Tracks Idea Evolution
-**As a** user who has previously validated ideas  
-**I want to** access the history of all my past analyses and compare them  
-**So that** I can track improvement in my ideas and make side-by-side comparisons
-
-**Acceptance Criteria:**
-- [ ] History view lists all past validations, newest first
-- [ ] Each list item shows: idea summary (first 50 chars), date, financeiro "viabilidade" score
-- [ ] Clicking a history item opens full analysis view (same as fresh validation)
-- [ ] Search bar filters by idea text (case-insensitive)
-- [ ] Pagination or infinite scroll for > 10 items
-- [ ] Delete button on each item (with confirmation)
-- [ ] Clear all history button (with confirmation)
-- [ ] History persists across logout/login (same email)
-
-**Linked Acceptance Criteria (from PRD):**
-- Feature 1: User Authentication (login required)
-- Feature 4: History & Persistence (core feature)
-- Feature 3: Dashboard Display (viewing past analyses)
+**Critérios de Aceite Vinculados (do PRD):**
+- Funcionalidade 1: Autenticação de Usuário (login obrigatório)
+- Funcionalidade 2: Envio de Ideia e Análise Multiagente (funcionalidade central)
+- Funcionalidade 3: Exibição no Dashboard (apresentação de resultados)
+- Funcionalidade 5: Tratamento de Erros (falhas parciais)
 
 ---
 
-### User Story 3: Developer Maintains Testable Agent Architecture
-**As a** developer on this project  
-**I want** each agent (Mercado, Técnico, Financeiro) to be independently testable and maintainable  
-**So that** I can fix bugs, update prompts, and add new agents without breaking existing ones
+### User Story 2: Usuário Recorrente Acompanha Evolução da Ideia
+**Como** usuário que já validou ideias anteriormente  
+**Quero** acessar o histórico de todas as minhas análises passadas e compará-las  
+**Para** acompanhar evolução das minhas ideias e comparar cenários lado a lado
 
-**Acceptance Criteria:**
-- [ ] Each agent is in a separate file/module (agents/mercadoAgent.js, etc.)
-- [ ] Each agent exports a function: `async agent(ideaText) => JSON`
-- [ ] Each agent can be tested in isolation with unit tests
-- [ ] Agent response schema is validated (zod or similar)
-- [ ] Orchestrator uses Promise.all() to call agents in parallel
-- [ ] Orchestrator gracefully handles agent failures (one agent failure doesn't crash others)
-- [ ] Prompt versioning documented in docs/prompts.md
-- [ ] Adding a 4th agent (e.g., Risco) requires only adding new file + updating orchestrator
+**Critérios de Aceite:**
+- [ ] Visualização de histórico lista todas as validações, da mais nova para a mais antiga
+- [ ] Cada item da lista mostra: resumo da ideia (primeiros 50 chars), data e score de "viabilidade" financeira
+- [ ] Clique em item do histórico abre análise completa (igual à validação recém-gerada)
+- [ ] Barra de busca filtra por texto da ideia (case-insensitive)
+- [ ] Paginação ou infinite scroll para > 10 itens
+- [ ] Botão de excluir em cada item (com confirmação)
+- [ ] Botão para limpar todo histórico (com confirmação)
+- [ ] Histórico persiste entre logout/login (mesmo e-mail)
 
-**Linked Acceptance Criteria (from PRD):**
-- Architecture: Multi-Agent Orchestration Pattern
-- Feature 2: Core business logic testability
-- Core Feature: Extensibility for future enhancements
+**Critérios de Aceite Vinculados (do PRD):**
+- Funcionalidade 1: Autenticação de Usuário (login obrigatório)
+- Funcionalidade 4: Histórico e Persistência (funcionalidade central)
+- Funcionalidade 3: Exibição no Dashboard (visualização de análises passadas)
 
 ---
 
-## 7. Dependencies & External Services
+### User Story 3: Desenvolvedor Mantém Arquitetura de Agentes Testável
+**Como** desenvolvedor deste projeto  
+**Quero** que cada agente (Mercado, Técnico, Financeiro) seja testável e mantido de forma independente  
+**Para** corrigir bugs, atualizar prompts e adicionar novos agentes sem quebrar os existentes
 
-### OpenAI API
+**Critérios de Aceite:**
+- [ ] Cada agente fica em arquivo/módulo separado (agents/mercadoAgent.js etc.)
+- [ ] Cada agente exporta uma função: `async agent(ideaText) => JSON`
+- [ ] Cada agente pode ser testado isoladamente com testes unitários
+- [ ] Schema de resposta do agente é validado (zod ou similar)
+- [ ] Orquestrador usa Promise.all() para chamar agentes em paralelo
+- [ ] Orquestrador trata falhas de agentes com resiliência (falha de um agente não derruba os demais)
+- [ ] Versionamento de prompts documentado em docs/prompts.md
+- [ ] Adicionar um 4o agente (ex.: Risco) exige apenas novo arquivo + atualização no orquestrador
+
+**Critérios de Aceite Vinculados (do PRD):**
+- Arquitetura: Padrão de Orquestração Multiagente
+- Funcionalidade 2: Testabilidade da lógica de negócio central
+- Funcionalidade central: Extensibilidade para melhorias futuras
+
+---
+
+## 7. Dependências e Serviços Externos
+
+### API OpenAI
 - **Endpoint:** `https://api.openai.com/v1/chat/completions`
-- **Models:** `gpt-4o-mini` (dev), `gpt-4o` (production)
-- **Rate Limits:** Shared between all users; monitor costs daily
-- **Fallback:** If quota exceeded, return 200 with error state to frontend
-- **Cost Estimate:** ~$0.02–0.05 per analysis at 3 agents × gpt-4o-mini
+- **Modelos:** `gpt-4o-mini` (dev), `gpt-4o` (produção)
+- **Rate Limits:** compartilhados entre todos os usuários; monitorar custo diariamente
+- **Fallback:** se quota exceder, retornar 200 com estado de erro ao frontend
+- **Estimativa de custo:** ~US$ 0,02-0,05 por análise com 3 agentes x gpt-4o-mini
 
-### GitHub (Infrastructure)
-- Repository hosting and collaboration
-- PR template and branch protections
-- GitHub Project for kanban-style task tracking
-- GitHub Actions for future CI/CD (post-Phase 6)
+### GitHub (Infraestrutura)
+- Hospedagem do repositório e colaboração
+- Template de PR e proteções de branch
+- GitHub Project para acompanhamento de tarefas em estilo kanban
+- GitHub Actions para CI/CD futuro (após Fase 6)
 
-### No Other External Dependencies
-- No payment processor (MVP: free tier)
-- No email service (JWT only; no password resets in MVP)
-- No analytics platform (can be added in Phase 6+)
-
----
-
-## 8. Out of Scope (Future Enhancements)
-
-- [ ] **PDF Export:** Export analysis as downloadable PDF (Phase 7+)
-- [ ] **Real Data Integration:** Crunchbase, Google Trends, market data APIs (Phase 7+)
-- [ ] **Collaborative Features:** Share analysis with co-founders (Phase 7+)
-- [ ] **Idea Comparison Tool:** Visual side-by-side comparison of multiple ideas (Phase 7+)
-- [ ] **Payment & Monetization:** Freemium tiers, advanced features (Phase 8+)
-- [ ] **Mobile Apps:** iOS/Android native apps (Phase 8+)
-- [ ] **Multi-Language:** i18n support beyond Portuguese (Phase 8+)
-- [ ] **Custom Prompts:** Allow users to define custom agents (Phase 7+)
-- [ ] **Integrations:** Slack, Notion, email notifications (Phase 8+)
+### Sem Outras Dependências Externas
+- Sem processador de pagamento (MVP: plano gratuito)
+- Sem serviço de e-mail (apenas JWT; sem reset de senha no MVP)
+- Sem plataforma de analytics (pode ser adicionada na Fase 6+)
 
 ---
 
-## 9. Success Metrics (Phase 7 Evaluation)
+## 8. Fora de Escopo (Melhorias Futuras)
 
-| Metric | Target | Rationale |
+- [ ] **Exportação em PDF:** exportar análise como PDF baixável (Fase 7+)
+- [ ] **Integração com Dados Reais:** Crunchbase, Google Trends, APIs de mercado (Fase 7+)
+- [ ] **Funcionalidades Colaborativas:** compartilhar análise com cofundadores (Fase 7+)
+- [ ] **Ferramenta de Comparação de Ideias:** comparação visual lado a lado de múltiplas ideias (Fase 7+)
+- [ ] **Pagamentos e Monetização:** planos freemium e recursos avançados (Fase 8+)
+- [ ] **Apps Mobile:** aplicativos nativos iOS/Android (Fase 8+)
+- [ ] **Multilíngue:** suporte i18n além de português (Fase 8+)
+- [ ] **Prompts Personalizados:** permitir usuários definirem agentes customizados (Fase 7+)
+- [ ] **Integrações:** Slack, Notion, notificações por e-mail (Fase 8+)
+
+---
+
+## 9. Métricas de Sucesso (Avaliação da Fase 7)
+
+| Métrica | Meta | Justificativa |
 |--------|--------|-----------|
-| **Code Coverage** | ≥ 30% | Demonstrates test-driven development across all modules |
-| **Semantic Commits** | 100% from all 5 members | Shows disciplined version control and team contribution |
-| **BDD Scenarios** | ≥ 3 per user story (9 total) | Traceability between business requirements and test cases |
-| **API Response Time** | < 15 sec for 3 agents | Performance indicator; user experience |
-| **Error Handling** | Zero unhandled exceptions in logs | Reliability and graceful degradation |
-| **Documentation Completeness** | All 8 docs listed in PRD completed | Clear communication of decisions, architecture, and usage |
+| **Cobertura de Código** | >= 30% | Demonstra desenvolvimento orientado a testes nos módulos principais |
+| **Commits Semânticos** | 100% dos dois contribuidores | Evidencia disciplina em versionamento e contribuição do time |
+| **Cenários BDD** | >= 3 por user story (9 no total) | Rastreabilidade entre requisitos de negócio e casos de teste |
+| **Tempo de Resposta da API** | < 15 s para 3 agentes | Indicador de performance e experiência do usuário |
+| **Tratamento de Erros** | Zero exceções não tratadas em logs | Confiabilidade e degradação elegante |
+| **Completude da Documentação** | 8 docs listados no PRD concluídos | Comunicação clara de decisões, arquitetura e uso |
 
 ---
 
-## 10. Definition of Ready (DoR) for Tasks
+## 10. Definition of Ready (DoR) das Tarefas
 
-Before a task enters development:
-- [ ] BDD scenario written (Gherkin .feature file)
-- [ ] Acceptance criteria documented (linked to user story)
-- [ ] API contract defined (if backend task)
-- [ ] Component mockups approved (if frontend task)
-- [ ] Dependencies on other tasks identified
-- [ ] Owner assigned (primary contributor)
+Antes de uma tarefa entrar em desenvolvimento:
+- [ ] Cenário BDD escrito (arquivo Gherkin .feature)
+- [ ] Critérios de aceite documentados (vinculados à user story)
+- [ ] Contrato de API definido (se tarefa de backend)
+- [ ] Mockups de componentes aprovados (se tarefa de frontend)
+- [ ] Dependências com outras tarefas identificadas
+- [ ] Responsável definido (contribuidor principal)
 
 ---
 
-## 11. Timeline & Phase Gates
+## 11. Cronograma e Marcos por Fase
 
-| Phase | Gate | Owner | Duration |
+| Fase | Gate | Responsável | Duração |
 |-------|------|-------|----------|
-| Phase 0 | Contracts finalized, env vars set, CI/CD baseline | Member A | 1 day |
-| Phase 1 | Auth + schema complete, no regressions | Member C | 2 days |
-| Phase 2 | 3 agents tested, prompts versioned | Member B | 3 days |
-| Phase 3 | Orchestrator + API contract validated | Member A | 2 days |
-| Phase 4 | Test suite + coverage report | Member E | 2 days |
-| Phase 5 | Frontend complete, integration tested | Member D | 4 days |
-| Phase 6 | Docs, UML, README, PRD, VIABILIDADE | Member E | 2 days |
-| Phase 7 | Hardening, final review, submission ready | Member A | 2 days |
+| Fase 0 | Contratos finalizados, variáveis de ambiente definidas, baseline de CI/CD | Backend Lead | 1 dia |
+| Fase 1 | Auth + schema concluídos, sem regressões | Backend Lead | 2 dias |
+| Fase 2 | 3 agentes testados, prompts versionados | Backend Lead | 3 dias |
+| Fase 3 | Orquestrador + contrato de API validados | Backend Lead | 2 dias |
+| Fase 4 | Suite de testes + relatório de cobertura | Backend Lead | 2 dias |
+| Fase 5 | Frontend concluído, integração testada | Frontend Lead | 4 dias |
+| Fase 6 | Docs, UML, README, PRD, VIABILIDADE | Frontend Lead | 2 dias |
+| Fase 7 | Hardening, revisão final, pronto para entrega | Backend Lead | 2 dias |
 
 ---
 
-## Appendix: API Contract (Reference)
+## Apêndice: Contrato de API (Referência)
 
-See `.copilot-instructions.md` section "API Contract (frozen Phase 0)" for complete request/response schemas and error codes.
+Veja a seção "API Contract (frozen Phase 0)" em `.copilot-instructions.md` para schemas completos de request/response e códigos de erro.
 
-**Key Endpoints:**
-- `POST /auth/login` → JWT token
-- `POST /api/validar` → 3-agent consolidated analysis
-- `GET /api/validacoes` → user's history
-- `DELETE /api/validacoes/:id` → remove one validation
-- `GET /health` → system status
+**Principais Endpoints:**
+- `POST /auth/login` -> token JWT
+- `POST /api/validar` -> análise consolidada de 3 agentes
+- `GET /api/validacoes` -> histórico do usuário
+- `DELETE /api/validacoes/:id` -> remove uma validação
+- `GET /health` -> status do sistema
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** 2026-05-19  
-**Next Review:** End of Phase 0 (before Phase 1 begins)
+**Versão do Documento:** 1.0  
+**Última Atualização:** 2026-05-19  
+**Próxima Revisão:** Final da Fase 0 (antes do início da Fase 1)
