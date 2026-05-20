@@ -54,91 +54,64 @@ Implementar a Versao 3 com arquitetura multiagente em fases curtas, priorizando 
 8.3 Ajustar pontos de confiabilidade (logs minimos e mensagens de erro acionaveis).
 8.4 Revisar checklist de rubricas para garantir aderencia antes de entrega.
 
-**Operating model for a 2-member team**
-1. Pessoa A - Backend Lead (Node.js, API, DB, Jest)
+**Operating model for a 5-member team**
+1. Membro A - Backend Lead e Integracao
 1.1 Dono de arquitetura backend, orchestrator, padrao de erros e contratos de API.
-1.2 Implementa servico OpenAI e agentes (mercado, tecnico, financeiro), com parse robusto e fallback de falha parcial.
-1.3 Implementa Prisma schema, migracoes, persistencia de validacoes e auth JWT.
-1.4 Mantem testes unitarios e de integracao backend (Jest + Supertest), incluindo coverage baseline.
-1.5 Mantem docs tecnicas de backend (contrato de API, prompts, setup backend e decisoes de dados).
+1.2 Faz code review final de PRs backend e coordena releases para main.
+1.3 Responsavel por conflitos de merge e decisoes de integracao.
 
-2. Pessoa B - Frontend Lead (React, UX, Playwright)
-2.1 Implementa login, IdeaForm, dashboard consolidado e historico.
-2.2 Integra frontend com API via contrato congelado, tratando loading, timeout, erro e resposta parcial.
-2.3 Implementa testes de fluxo de interface e jornada fim-a-fim (Playwright), cobrindo login -> validacao -> historico.
-2.4 Mantem UX responsiva e acessibilidade basica (navegacao por teclado, feedback visual e mensagens claras).
-2.5 Mantem docs de frontend e guias de uso (README de execucao, comportamento da UI e fluxos principais).
+2. Membro B - IA e Agentes
+2.1 Implementa servico OpenAI e agentes (mercado, tecnico, financeiro).
+2.2 Mantem docs/prompts.md e versionamento de prompt.
+2.3 Trabalha com Membro E para cobertura de testes dos agentes.
 
-3. Pair ownership e revisao cruzada
-3.1 Toda PR tem 1 autor e 1 revisor (obrigatoriamente a outra pessoa).
-3.2 Backend Lead revisa mudancas que impactam API/contrato; Frontend Lead revisa mudancas que impactam UX/fluxos.
-3.3 Mudancas de contrato exigem PR coordenada backend+frontend no mesmo ciclo.
+3. Membro C - Dados e Auth
+3.1 Implementa Prisma schema, migracoes e persistencia de validacoes.
+3.2 Implementa auth JWT (login por email + middleware).
+3.3 Garante seguranca basica de .env e limites de entrada.
+
+4. Membro D - Frontend
+4.1 Implementa login, IdeaForm, dashboard e historico.
+4.2 Integra com API via contrato fechado (sem quebrar schema combinado).
+4.3 Trabalha com Membro A para tratar estados de erro/timeout/falha parcial.
+
+5. Membro E - QA, Docs e Governanca
+5.1 Estrutura suite de testes (Jest, Supertest, Testing Library) e coverage.
+5.2 Mantem README, PRD, VIABILIDADE, user stories e UML.
+5.3 Mantem .github/pull_request_template.md, CODEOWNERS e checklist de rubrica.
 
 **Task split by phase (who leads and who supports)**
 1. Fase 0
-1.1 Lead: Backend. Support: Frontend.
+1.1 Lead: A. Support: C, E.
 1.2 Entregas: contrato API v1, estrutura de pastas, scripts, .env.example.
 
 2. Fase 1
-2.1 Lead: Backend. Support: Frontend.
+2.1 Lead: C. Support: A.
 2.2 Entregas: Express base, Prisma schema, JWT middleware.
 
 3. Fase 2
-3.1 Lead: Backend. Support: Frontend.
+3.1 Lead: B. Support: E.
 3.2 Entregas: openai service, 3 agentes, validacao de schema por agente.
 
 4. Fase 3
-4.1 Lead: Backend. Support: Frontend.
+4.1 Lead: A. Support: B, C.
 4.2 Entregas: orchestrator paralelo, POST /api/validar, endpoints de historico.
 
 5. Fase 4
-5.1 Lead: Backend. Support: Frontend.
+5.1 Lead: E. Support: A, B, C.
 5.2 Entregas: testes obrigatorios, relatorio de coverage, cenarios de erro.
 
 6. Fase 5
-6.1 Lead: Frontend. Support: Backend.
+6.1 Lead: D. Support: A.
 6.2 Entregas: login frontend, formulario, dashboard e historico.
 
 7. Fase 6
-7.1 Lead: Frontend. Support: Backend.
+7.1 Lead: E. Support: todos.
 7.2 Entregas: docs completas e alinhadas com implementacao real.
 
 8. Fase 7
-8.1 Lead: Backend. Support: Frontend.
+8.1 Lead: A. Support: todos.
 8.2 Entregas: hardening, bugfix final, checklist de entrega.
-
-**Detailed split for 2 people (execution order inside each phase)**
-1. Fase 0
-1.1 Backend: contrato de resposta consolidada, contrato de erro e .env.example backend.
-1.2 Frontend: estrutura base React/Tailwind e cliente API tipado por contrato.
-
-2. Fase 1
-2.1 Backend: Express, middleware de erro, Prisma, JWT e rotas base de auth.
-2.2 Frontend: tela de login inicial e fluxo de armazenamento de token.
-
-3. Fase 2
-3.1 Backend: OpenAI service, 3 agentes especializados e adaptadores de erro por agente.
-3.2 Frontend: mocks de resposta para prototipar dashboard sem bloquear desenvolvimento.
-
-4. Fase 3
-4.1 Backend: orchestrator paralelo, POST /api/validar e endpoints de historico.
-4.2 Frontend: integracao real com endpoints e renderizacao de resultado consolidado/parcial.
-
-5. Fase 4
-5.1 Backend: testes unitarios (agentes/orchestrator) e integracao (auth/validar/historico/persistencia).
-5.2 Frontend: suites Playwright para fluxos criticos e cenarios de erro de API.
-
-6. Fase 5
-6.1 Frontend: refinamento de UX, estados de loading/erro, historico e responsividade.
-6.2 Backend: ajustes de payload, performance e mensagens acionaveis para UI.
-
-7. Fase 6
-7.1 Frontend: consolidacao de README, PRD/VIABILIDADE/prompts com evidencias visuais.
-7.2 Backend: consolidacao de exemplos de API, cobertura e guia de execucao local.
-
-8. Fase 7
-8.1 Backend: hardening final (sanitizacao, limites e logs minimos).
-8.2 Frontend: validacao final de timeout/falha parcial e smoke test E2E pre-entrega.
 
 **Integration strategy (to combine all solutions)**
 1. Branching model
@@ -158,7 +131,7 @@ Implementar a Versao 3 com arquitetura multiagente em fases curtas, priorizando 
 
 4. Cadencia recomendada
 4.1 Daily de 15 minutos com bloqueios e plano do dia.
-4.2 Integracao em develop pelo menos 1x por dia por pessoa.
+4.2 Integracao em develop pelo menos 1x por dia por membro ativo.
 4.3 Demo interna no fim de cada fase com checklist de aceite.
 
 5. Merge windows e cutoffs
