@@ -6,15 +6,15 @@
 import useForm from '../../hooks/useForm';
 import useValidation from '../../hooks/useValidation';
 import LoadingState from './LoadingState';
-import ValidationResults from './ValidationResults';
+import AnalysisDashboard from '../AnalysisDashboard';
 
 const validateIdeaForm = ({ idea }) => {
   const errors = {};
 
   if (!idea || !idea.trim()) {
     errors.idea = 'Descreva sua ideia para iniciar a validação.';
-  } else if (idea.trim().length < 10) {
-    errors.idea = 'A ideia precisa ter pelo menos 10 caracteres.';
+  } else if (idea.trim().length < 20) {
+    errors.idea = 'A ideia precisa ter pelo menos 20 caracteres.';
   }
 
   return errors;
@@ -89,7 +89,7 @@ const IdeaForm = () => {
           </div>
         )}
 
-        {result && <ValidationResults result={result} />}
+        {result && <AnalysisDashboard result={result} />}
       </div>
     </div>
   );
