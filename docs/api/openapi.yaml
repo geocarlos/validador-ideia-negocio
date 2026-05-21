@@ -66,6 +66,51 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Login por email (alias)
+      description: Alias para /auth/login. Gera um token JWT para o usuario com base no email informado.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              login:
+                value:
+                  email: user@example.com
+      responses:
+        '200':
+          description: Token gerado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              examples:
+                sucesso:
+                  value:
+                    token: <JWT_TOKEN>
+                    expiresIn: 604800
+                    userId: user-uuid
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          description: Email invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                emailInvalido:
+                  value:
+                    error: Validation error
+                    details: email must be a valid email address
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/validar:
     post:
       tags: [Validacoes]
@@ -198,6 +243,13 @@ paths:
             minimum: 1
             maximum: 100
             default: 10
+        - name: search
+          in: query
+          required: false
+          description: Filtro de busca textual sobre ideias
+          schema:
+            type: string
+            example: IA
       responses:
         '200':
           description: Historico retornado com sucesso
