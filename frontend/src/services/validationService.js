@@ -45,6 +45,33 @@ const validationService = {
 
     return response.json();
   },
+
+  /**
+   * Deleta uma validação específica por ID.
+   * @param {string} id - ID da validação a deletar
+   * @returns {Promise} Resposta do servidor
+   */
+  async deleteValidation(id) {
+    if (!id) {
+      throw new Error('ID da validação é obrigatório');
+    }
+
+    const response = await fetch(`${API_URL}/validacoes/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(
+        payload.message || `Erro ao deletar validação: ${response.status}`
+      );
+    }
+
+    return response.json().catch(() => ({ success: true }));
+  },
 };
 
 export default validationService;

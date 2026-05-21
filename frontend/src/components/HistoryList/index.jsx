@@ -49,7 +49,11 @@ export default function HistoryList() {
 
       <div className="grid gap-3">
         {items.map((v) => (
-          <ValidationCard key={v.id || v._id || JSON.stringify(v)} validation={v} />
+          <ValidationCard 
+            key={v.id || v._id || JSON.stringify(v)} 
+            validation={v}
+            onDelete={() => refresh()}
+          />
         ))}
       </div>
 
