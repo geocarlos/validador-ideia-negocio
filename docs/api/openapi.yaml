@@ -1,0 +1,681 @@
+openapi: 3.1.0
+info:
+  title: Validador de Ideia de Negocio - API REST
+  version: 1.0.0
+  description: |
+    Contrato REST da versao avancada com autenticacao JWT, validacao multiagente
+    e historico de validacoes.
+servers:
+  - url: http://localhost:3001
+    description: Desenvolvimento local
+
+tags:
+  - name: Auth
+    description: Autenticacao e emissao de token JWT
+  - name: Validacoes
+    description: Validacao de ideia e historico
+  - name: Health
+    description: Status do sistema
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login por email
+      description: Gera um token JWT para o usuario com base no email informado.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              login:
+                value:
+                  email: user@example.com
+      responses:
+        '200':
+          description: Token gerado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              examples:
+                sucesso:
+                  value:
+                    token: <JWT_TOKEN>
+                    expiresIn: 604800
+                    userId: user-uuid
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          description: Email invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                emailInvalido:
+                  value:
+                    error: Validation error
+                    details: email must be a valid email address
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Login por email (alias)
+      description: Alias para /auth/login. Gera um token JWT para o usuario com base no email informado.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              login:
+                value:
+                  email: user@example.com
+      responses:
+        '200':
+          description: Token gerado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              examples:
+                sucesso:
+                  value:
+                    token: <JWT_TOKEN>
+                    expiresIn: 604800
+                    userId: user-uuid
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          description: Email invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                emailInvalido:
+                  value:
+                    error: Validation error
+                    details: email must be a valid email address
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/validar:
+    post:
+      tags: [Validacoes]
+      summary: Validar ideia de negocio
+      description: |
+        Dispara os agentes de mercado, tecnico e financeiro em paralelo,
+        consolida o resultado e persiste a validacao.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidarRequest'
+            examples:
+              ideia:
+                value:
+                  ideia: Uma plataforma SaaS para freelancers especializados em IA com pagamento recorrente e trilhas de crescimento.
+      responses:
+        '200':
+          description: Validacao concluida (sucesso total ou parcial)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidacaoResponse'
+              examples:
+                sucessoTotal:
+                  value:
+                    id: val-uuid
+                    ideia: Uma plataforma SaaS para freelancers especializados em IA.
+                    consolidado:
+                      mercado:
+                        problema: Profissionais freelancers de IA tem dificuldade em captar clientes recorrentes.
+                        publico_alvo:
+                          primario: Freelancers de IA em inicio de operacao
+                          secundario: Pequenas consultorias de automacao
+                        tam: Mercado em crescimento acelerado com alta demanda por automacao
+                        concorrentes: [Upwork, Toptal]
+                        diferencial: Curadoria de projetos com foco em IA aplicada
+                      tecnico:
+                        complexidade: media
+                        stack_sugerida: [Node.js, React, PostgreSQL]
+                        componente_ia: Match de projetos por embeddings
+                        limitacoes_tecnicas: [Dependencia de APIs terceiras, custo de inferencia]
+                        mvp_estimativa: 8-12 semanas
+                      financeiro:
+                        modelo_receita: assinatura
+                        custo_operacional_ia: medio
+                        viabilidade_financeira: media
+                        proximo_passo: Validar willingness to pay com 20 entrevistas
+                    metricas:
+                      tempo_execucao_ms: 12543
+                      tokens_estimados: 2840
+                      agentes_sucesso: 3
+                      agentes_erro: 0
+                    createdAt: '2026-05-19T14:32:00Z'
+                sucessoParcial:
+                  value:
+                    id: val-uuid
+                    ideia: Uma plataforma SaaS para freelancers especializados em IA.
+                    consolidado:
+                      mercado:
+                        problema: Demora para validar canais de aquisicao.
+                        publico_alvo:
+                          primario: Freelancers de IA
+                          secundario: Agencias pequenas
+                        tam: Nicho promissor
+                        concorrentes: [Upwork]
+                        diferencial: Funis prontos para microservicos de IA
+                      tecnico:
+                        erro: timeout
+                        mensagem: Agent exceeded 45s limit
+                      financeiro:
+                        modelo_receita: freemium
+                        custo_operacional_ia: medio
+                        viabilidade_financeira: alta
+                        proximo_passo: Rodar piloto com 10 usuarios pagantes
+                    metricas:
+                      tempo_execucao_ms: 13210
+                      tokens_estimados: 2100
+                      agentes_sucesso: 2
+                      agentes_erro: 1
+                    createdAt: '2026-05-19T14:32:00Z'
+        '400':
+          description: Erro de validacao de payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                ideiaCurta:
+                  value:
+                    error: Validation error
+                    details: ideia must be at least 20 characters long
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          description: Payload semanticamente invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                ideiaIncompativel:
+                  value:
+                    error: Validation error
+                    details: ideia contains unsupported characters
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/validacoes:
+    get:
+      tags: [Validacoes]
+      summary: Listar historico de validacoes
+      description: Retorna o historico de validacoes do usuario autenticado em formato paginado.
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Pagina atual
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          description: Quantidade de itens por pagina
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: search
+          in: query
+          required: false
+          description: Filtro de busca textual sobre ideias
+          schema:
+            type: string
+            example: IA
+      responses:
+        '200':
+          description: Historico retornado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidacoesListResponse'
+              examples:
+                lista:
+                  value:
+                    items:
+                      - id: val-uuid-1
+                        ideia: Plataforma para conectar freelancers de IA a PMEs
+                        createdAt: '2026-05-19T14:32:00Z'
+                      - id: val-uuid-2
+                        ideia: Ferramenta de automacao para atendimento de e-commerce
+                        createdAt: '2026-05-18T10:15:00Z'
+                    total: 42
+                    page: 1
+                    pageSize: 10
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          description: Parametros de consulta invalidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                pageInvalida:
+                  value:
+                    error: Validation error
+                    details: page must be greater than or equal to 1
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/validacoes/{id}:
+    get:
+      tags: [Validacoes]
+      summary: Detalhar validacao por id
+      description: Retorna os detalhes completos de uma validacao especifica.
+      parameters:
+        - $ref: '#/components/parameters/ValidacaoId'
+      responses:
+        '200':
+          description: Validacao encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidacaoResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Validacao nao encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                naoEncontrado:
+                  value:
+                    error: Not Found
+                    details: Validation id not found
+        '422':
+          description: Parametro de rota invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                idInvalido:
+                  value:
+                    error: Validation error
+                    details: id must be a UUID
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags: [Validacoes]
+      summary: Remover validacao por id
+      description: Remove uma validacao do historico do usuario autenticado.
+      parameters:
+        - $ref: '#/components/parameters/ValidacaoId'
+      responses:
+        '200':
+          description: Validacao removida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+              examples:
+                removido:
+                  value:
+                    success: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Validacao nao encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                naoEncontrado:
+                  value:
+                    error: Not Found
+                    details: Validation id not found
+        '422':
+          description: Parametro de rota invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                idInvalido:
+                  value:
+                    error: Validation error
+                    details: id must be a UUID
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check do sistema
+      description: Endpoint de monitoramento para verificar disponibilidade da API.
+      security: []
+      responses:
+        '200':
+          description: Sistema saudavel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              examples:
+                ok:
+                  value:
+                    status: ok
+                    timestamp: '2026-05-19T14:32:00Z'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    ValidacaoId:
+      name: id
+      in: path
+      required: true
+      description: Identificador da validacao
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    BadRequest:
+      description: Requisicao invalida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            badRequest:
+              value:
+                error: Validation error
+                details: invalid request payload
+    Unauthorized:
+      description: Token ausente ou invalido
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            unauthorized:
+              value:
+                error: Unauthorized
+                details: Missing or invalid Authorization header
+    InternalServerError:
+      description: Erro interno do servidor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            internal:
+              value:
+                error: Internal Server Error
+                details: unexpected error while processing request
+
+  schemas:
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+
+    LoginResponse:
+      type: object
+      additionalProperties: false
+      required: [token, expiresIn, userId]
+      properties:
+        token:
+          type: string
+          example: <JWT_TOKEN>
+        expiresIn:
+          type: integer
+          description: Expiracao em segundos
+          example: 604800
+        userId:
+          type: string
+          example: user-uuid
+
+    ValidarRequest:
+      type: object
+      additionalProperties: false
+      required: [ideia]
+      properties:
+        ideia:
+          type: string
+          minLength: 20
+          example: Uma plataforma SaaS para freelancers especializados em IA.
+
+    PublicoAlvo:
+      type: object
+      additionalProperties: false
+      required: [primario, secundario]
+      properties:
+        primario:
+          type: string
+        secundario:
+          type: string
+
+    MercadoResult:
+      type: object
+      additionalProperties: false
+      required: [problema, publico_alvo, tam, concorrentes, diferencial]
+      properties:
+        problema:
+          type: string
+        publico_alvo:
+          $ref: '#/components/schemas/PublicoAlvo'
+        tam:
+          type: string
+        concorrentes:
+          type: array
+          items:
+            type: string
+        diferencial:
+          type: string
+
+    TecnicoResult:
+      type: object
+      additionalProperties: false
+      required: [complexidade, stack_sugerida, componente_ia, limitacoes_tecnicas, mvp_estimativa]
+      properties:
+        complexidade:
+          type: string
+          enum: [baixa, media, alta]
+        stack_sugerida:
+          type: array
+          items:
+            type: string
+        componente_ia:
+          type: string
+        limitacoes_tecnicas:
+          type: array
+          items:
+            type: string
+        mvp_estimativa:
+          type: string
+
+    FinanceiroResult:
+      type: object
+      additionalProperties: false
+      required: [modelo_receita, custo_operacional_ia, viabilidade_financeira, proximo_passo]
+      properties:
+        modelo_receita:
+          type: string
+        custo_operacional_ia:
+          type: string
+        viabilidade_financeira:
+          type: string
+          enum: [baixa, media, alta]
+        proximo_passo:
+          type: string
+
+    AgentError:
+      type: object
+      additionalProperties: false
+      required: [erro, mensagem]
+      properties:
+        erro:
+          type: string
+          example: timeout
+        mensagem:
+          type: string
+          example: Agent exceeded 45s limit
+
+    Consolidado:
+      type: object
+      additionalProperties: false
+      required: [mercado, tecnico, financeiro]
+      properties:
+        mercado:
+          oneOf:
+            - $ref: '#/components/schemas/MercadoResult'
+            - $ref: '#/components/schemas/AgentError'
+        tecnico:
+          oneOf:
+            - $ref: '#/components/schemas/TecnicoResult'
+            - $ref: '#/components/schemas/AgentError'
+        financeiro:
+          oneOf:
+            - $ref: '#/components/schemas/FinanceiroResult'
+            - $ref: '#/components/schemas/AgentError'
+
+    Metricas:
+      type: object
+      additionalProperties: false
+      required: [agentes_sucesso, agentes_erro]
+      properties:
+        tempo_execucao_ms:
+          type: integer
+          minimum: 0
+        tokens_estimados:
+          type: integer
+          minimum: 0
+        agentes_sucesso:
+          type: integer
+          minimum: 0
+        agentes_erro:
+          type: integer
+          minimum: 0
+
+    ValidacaoResponse:
+      type: object
+      additionalProperties: false
+      required: [id, ideia, consolidado, metricas, createdAt]
+      properties:
+        id:
+          type: string
+          example: val-uuid
+        ideia:
+          type: string
+        consolidado:
+          $ref: '#/components/schemas/Consolidado'
+        metricas:
+          $ref: '#/components/schemas/Metricas'
+        createdAt:
+          type: string
+          format: date-time
+
+    ValidacaoListItem:
+      type: object
+      additionalProperties: false
+      required: [id, ideia, createdAt]
+      properties:
+        id:
+          type: string
+        ideia:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    ValidacoesListResponse:
+      type: object
+      additionalProperties: false
+      required: [items, total, page, pageSize]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidacaoListItem'
+        total:
+          type: integer
+          minimum: 0
+        page:
+          type: integer
+          minimum: 1
+        pageSize:
+          type: integer
+          minimum: 1
+
+    DeleteResponse:
+      type: object
+      additionalProperties: false
+      required: [success]
+      properties:
+        success:
+          type: boolean
+          example: true
+
+    HealthResponse:
+      type: object
+      additionalProperties: false
+      required: [status, timestamp]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        timestamp:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [error, details]
+      properties:
+        error:
+          type: string
+        details:
+          type: string
