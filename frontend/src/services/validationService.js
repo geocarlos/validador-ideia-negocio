@@ -22,6 +22,29 @@ const validationService = {
 
     return response.json();
   },
+  /**
+   * Busca histórico de validações com paginação e filtros.
+   * params: { page, pageSize, query, from, to }
+   */
+  async fetchHistory({ page = 1, pageSize = 10, query = '', from, to, signal } = {}) {
+    const params = new URLSearchParams();
+    params.set('page', String(page));
+    params.set('pageSize', String(pageSize));
+    if (query) params.set('q', query);
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+
+    const url = `${API_URL}/validacoes?${params.toString()}`;
+
+    const response = await fetch(url, { signal });
+
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(payload.message || `Erro ao buscar histórico: ${response.status}`);
+    }
+
+    return response.json();
+  },
 };
 
 export default validationService;
