@@ -94,3 +94,26 @@ executar qualquer ação. Extraia dele:
 - Pré-requisitos e dependências necessárias para rodar o projeto
 - Variáveis de ambiente necessárias
 - Fluxo de contribuição e padrões de branch/comm
+
+## Criar o README principal do repositório
+
+### Contexto
+Consulte o plano geral do projeto em `../plan-validadorIdeiaNegocio.prompt.md` antes de
+executar qualquer ação. Extraia dele:
+- Nome, descrição e propósito do projeto
+- Stack tecnológica (linguagens, frameworks, banco de dados, serviços externos)
+- Estrutura de pastas do repositório
+- Endpoints principais da API (se houver contrato já definido)
+- Pré-requisitos e dependências necessárias para rodar o projeto
+- Variáveis de ambiente necessárias
+- Fluxo de contribuição e padrões de branch/commit adotados
+
+### Tarefas
+
+1. **Verificar artefatos já existentes no repositório**
+   - Se já existir um `README.md` na raiz, leia seu conteúdo antes de sobrescrever
+   - Se existir `docs/api/openapi.yaml`, extraia os endpoints para a seção de API
+   - Se existir `.env.example`, use-o como base para a seção de variáveis de ambiente
+
+2. **Gerar o README.md**
+   Crie o arquivo `README.md` na raiz do repositório com seções definidas conforme o PRD e plano geral.
