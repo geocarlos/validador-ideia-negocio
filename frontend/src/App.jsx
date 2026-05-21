@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import useAuth from './hooks/useAuth'
 import LoginForm from './components/auth/LoginForm'
 import AuthGuard from './components/auth/AuthGuard'
+import IdeaForm from './components/IdeaForm/IdeaForm'
 
 // Página de Login Simples
 const LoginPage = () => {
@@ -91,7 +92,11 @@ const DashboardPage = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="mb-8">
+            <IdeaForm />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
