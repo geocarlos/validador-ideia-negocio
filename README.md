@@ -279,8 +279,9 @@ test(orchestrator): cobrir cenário de falha parcial
 
 | Área | Responsável |
 |---|---|
-| Arquitetura backend / orchestrator | Membro A |
-| Serviço OpenAI e agentes | Membro B |
-| Prisma schema, migrações e auth | Membro C |
-| Frontend (React + Tailwind) | Membro D |
-| Testes, cobertura e documentação | Membro E |
+| Arquitetura backend - API REST | Luiz |
+| Arquitetura backend - orchestrator | Geocarlos |
+| Serviço OpenAI e agentes | Geocarlos |
+| Prisma schema, migrações e auth | Luiz |
+| Frontend (React + Tailwind) | Vanessa |
+| Testes, cobertura e documentação | Vanessa |
