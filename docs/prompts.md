@@ -117,3 +117,40 @@ executar qualquer ação. Extraia dele:
 
 2. **Gerar o README.md**
    Crie o arquivo `README.md` na raiz do repositório com seções definidas conforme o PRD e plano geral.
+
+## Criar documentação UML — Diagramas de Sequência e de Classes
+
+### Contexto
+Consulte o plano geral do projeto em `../plan-validadorIdeiaNegocio.prompt.md` antes de
+executar qualquer ação. Consulte também os artefatos já existentes no repositório:
+- `docs/api/openapi.yaml` — para extrair fluxos de requisição/resposta e entidades
+- Código-fonte existente (se houver) — para refletir a implementação real nas classes
+- `README.md` — para confirmar stack e camada de arquitetura adotada
+
+Extraia do plano geral:
+- Atores do sistema (usuário, serviços externos, workers, etc.)
+- Casos de uso e fluxos principais (happy path e fluxos alternativos)
+- Entidades do domínio, seus atributos e relacionamentos
+- Padrões arquiteturais adotados (MVC, Clean Architecture, DDD, etc.)
+
+### Tarefas
+
+1. **Definir o formato de saída**
+   - Gere todos os diagramas em **Mermaid** (`.md` com bloco ```mermaid```)
+   - Como alternativa complementar, gere também em **PlantUML** (`.puml`) se o
+     plano geral indicar uso dessa ferramenta
+   - Salve os arquivos em `docs/uml/`
+
+2. **Diagrama de Sequência UML**
+   Crie um diagrama de sequência para **cada fluxo principal** identificado
+   no plano geral. Para cada diagrama:
+
+   - Identifique e represente todos os participantes:
+     `Usuário | Frontend | API Gateway | Controller | Service | Repository | DB |
+     Serviço Externo`
+     (use apenas os que existem na arquitetura do projeto)
+   - Cubra obrigatoriamente:
+     - Fluxo principal (happy path) completo, do request à resposta final
+     - Fluxo alternativo de erro mais relevante (ex: validação, não encontrado,
+       falha externa)
+     - Chamadas assíncronas e callbacks, se existirem (use `-->>`
