@@ -81,3 +81,16 @@ Ao final, liste:
 - Caminho do arquivo de contrato gerado
 - Endpoints documentados (método + rota)
 - Qualquer ambiguidade encontrada no plano geral que precise de esclarecimento
+
+## Criar o README principal do repositório
+
+### Contexto
+Consulte o plano geral do projeto em `../plan-validadorIdeiaNegocio.prompt.md` antes de
+executar qualquer ação. Extraia dele:
+- Nome, descrição e propósito do projeto
+- Stack tecnológica (linguagens, frameworks, banco de dados, serviços externos)
+- Estrutura de pastas do repositório
+- Endpoints principais da API (se houver contrato já definido)
+- Pré-requisitos e dependências necessárias para rodar o projeto
+- Variáveis de ambiente necessárias
+- Fluxo de contribuição e padrões de branch/comm
