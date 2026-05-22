@@ -40,7 +40,7 @@ export default function HistoryList() {
         <div className="p-4 text-gray-600">Nenhuma validação encontrada.</div>
       )}
 
-      <div className="grid gap-3">
+      <div className="grid gap-3 grid-cols-1">
         {items.map((v) => (
           <ValidationCard
             key={v.id}
