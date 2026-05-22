@@ -19,6 +19,13 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({
+      error: "Invalid JSON",
+      details: "Corpo da requisição JSON está inválido. Verifique aspas, vírgulas e quebras de linha em strings."
+    });
+  }
+
   console.error(err.stack);
   res.status(500).json({
     error: "Internal Server Error",
