@@ -16,6 +16,25 @@ async function validarIdeia(userId, ideia) {
 
   const analise = await orquestrarValidacao(ideia);
 
+  // Normaliza campos de mercado que podem ser objetos (ex: publico_alvo)
+  try {
+    const mercado = analise?.consolidado?.mercado;
+    if (mercado && typeof mercado === 'object') {
+      const pa = mercado.publico_alvo;
+      if (pa && typeof pa === 'object') {
+        const primario = (pa.primario || '').toString().trim();
+        const secundario = (pa.secundario || '').toString().trim();
+        const parts = [];
+        if (primario) parts.push(primario);
+        if (secundario) parts.push(secundario);
+        mercado.publico_alvo = parts.length > 0 ? parts.join(' / ') : JSON.stringify(pa);
+      }
+    }
+  } catch (e) {
+    // Não falhar a validação por causa da normalização; manter o consolidado original
+    console.error('Erro ao normalizar consolidado.mercado.publico_alvo:', e.message);
+  }
+
   const validacao = await prisma.validacao.create({
     data: {
       ideia,
