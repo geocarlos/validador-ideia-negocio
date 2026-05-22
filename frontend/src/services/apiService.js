@@ -1,98 +1,69 @@
 /**
- * Exemplo de Serviço de API
- * Mostra como usar authService em requisições autenticadas
+ * Serviço de API genérico — delega aos endpoints reais do backend.
  */
 
+import { apiRequest } from './apiClient';
 import authService from './authService';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+import validationService from './validationService';
+import { mapValidationResponse } from '../utils/validationMapper';
 
 const apiService = {
-  /**
-   * Fazer requisição autenticada genérica
-   */
   async request(endpoint, options = {}) {
-    const url = `${API_URL}${endpoint}`;
-    const headers = authService.getAuthHeaders();
-
-    try {
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          ...headers,
-          ...options.headers,
-        },
-      });
-
-      // Se token expirou (401), fazer logout
-      if (response.status === 401) {
-        authService.logout();
-        window.location.href = '/login';
-        throw new Error('Sessão expirada');
-      }
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || `Erro: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('API request error:', error);
-      throw error;
-    }
+    return apiRequest(endpoint, options);
   },
 
-  /**
-   * GET - Obter análise por ID
-   */
+  async getValidation(id) {
+    return validationService.getValidationDetail(id);
+  },
+
+  async listValidations(filters = {}) {
+    const { page = 1, pageSize = 10, search, query } = filters;
+    return validationService.fetchHistory({
+      page,
+      pageSize,
+      query: search || query || '',
+    });
+  },
+
+  async createValidation(ideia) {
+    const idea = ideia?.ideia ?? ideia?.idea ?? ideia;
+    return validationService.validateIdea(idea);
+  },
+
+  async deleteValidation(id) {
+    return validationService.deleteValidation(id);
+  },
+
+  /** @deprecated use getValidation */
   async getAnalysis(id) {
-    return this.request(`/analysis/${id}`);
+    return this.getValidation(id);
   },
 
-  /**
-   * GET - Listar todas as análises do usuário
-   */
+  /** @deprecated use listValidations */
   async listAnalysis(filters = {}) {
-    const params = new URLSearchParams(filters);
-    return this.request(`/analysis?${params}`);
+    return this.listValidations(filters);
   },
 
-  /**
-   * POST - Criar nova análise
-   */
+  /** @deprecated use createValidation */
   async createAnalysis(data) {
-    return this.request('/analysis', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+    return this.createValidation(data);
   },
 
-  /**
-   * PUT - Atualizar análise
-   */
-  async updateAnalysis(id, data) {
-    return this.request(`/analysis/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
-  },
-
-  /**
-   * DELETE - Deletar análise
-   */
+  /** @deprecated use deleteValidation */
   async deleteAnalysis(id) {
-    return this.request(`/analysis/${id}`, {
-      method: 'DELETE',
-    });
+    return this.deleteValidation(id);
   },
 
-  /**
-   * Exemplo: Obter perfil do usuário
-   */
+  async updateAnalysis() {
+    throw new Error('Atualização de validação não suportada pelo backend');
+  },
+
   async getUserProfile() {
-    return this.request('/user/profile');
+    const user = authService.getUserFromToken();
+    if (!user) throw new Error('Usuário não autenticado');
+    return user;
   },
 };
 
+export { mapValidationResponse };
 export default apiService;

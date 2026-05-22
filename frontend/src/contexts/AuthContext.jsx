@@ -1,6 +1,5 @@
 /**
  * Contexto de autenticação
- * Fornece estado e métodos de autenticação para toda a aplicação
  */
 
 import { createContext, useState, useEffect, useCallback } from 'react';
@@ -14,9 +13,6 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  /**
-   * Restaurar sessão ao montar o componente
-   */
   useEffect(() => {
     const restoreSession = async () => {
       try {
@@ -24,7 +20,6 @@ export const AuthProvider = ({ children }) => {
         const token = authService.getToken();
 
         if (token) {
-          // Validar token com o backend
           const isValid = await authService.validateToken();
 
           if (isValid) {
@@ -33,7 +28,6 @@ export const AuthProvider = ({ children }) => {
             setIsAuthenticated(true);
             setError(null);
           } else {
-            // Token inválido, limpar
             authService.logout();
             setUser(null);
             setIsAuthenticated(false);
@@ -56,9 +50,6 @@ export const AuthProvider = ({ children }) => {
     restoreSession();
   }, []);
 
-  /**
-   * Fazer login
-   */
   const login = useCallback(async (email) => {
     try {
       setLoading(true);
@@ -66,11 +57,15 @@ export const AuthProvider = ({ children }) => {
 
       const response = await authService.login(email);
 
-      if (response.user && response.token) {
-        setUser(response.user);
+      if (response.token) {
+        const userData =
+          response.user || authService.getUserFromToken();
+        setUser(userData);
         setIsAuthenticated(true);
         return response;
       }
+
+      throw new Error('Resposta de login inválida');
     } catch (err) {
       const errorMessage = err.message || 'Erro ao fazer login';
       setError(errorMessage);
@@ -82,9 +77,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  /**
-   * Fazer logout
-   */
   const logout = useCallback(() => {
     authService.logout();
     setUser(null);
@@ -92,9 +84,6 @@ export const AuthProvider = ({ children }) => {
     setError(null);
   }, []);
 
-  /**
-   * Limpar erro
-   */
   const clearError = useCallback(() => {
     setError(null);
   }, []);
@@ -110,9 +99,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 };
 

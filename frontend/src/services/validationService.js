@@ -1,76 +1,46 @@
 /**
- * Serviço específico de validação de ideias.
- * Desacopla a chamada ao endpoint /api/validar.
+ * Serviço de validação — alinhado com a API do backend.
  */
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+import { apiRequest } from './apiClient';
+import {
+  mapValidationResponse,
+  mapHistoryResponse,
+} from '../utils/validationMapper';
 
 const validationService = {
   async validateIdea(idea) {
-    const response = await fetch(`${API_URL}/validar`, {
+    const data = await apiRequest('/validar', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ idea }),
+      body: JSON.stringify({ ideia: idea }),
     });
-
-    if (!response.ok) {
-      const payload = await response.json().catch(() => ({}));
-      throw new Error(payload.message || `Erro na validação: ${response.status}`);
-    }
-
-    return response.json();
+    return mapValidationResponse(data);
   },
-  /**
-   * Busca histórico de validações com paginação e filtros.
-   * params: { page, pageSize, query, from, to }
-   */
-  async fetchHistory({ page = 1, pageSize = 10, query = '', from, to, signal } = {}) {
+
+  async fetchHistory({ page = 1, pageSize = 10, query = '', signal } = {}) {
     const params = new URLSearchParams();
     params.set('page', String(page));
     params.set('pageSize', String(pageSize));
-    if (query) params.set('q', query);
-    if (from) params.set('from', from);
-    if (to) params.set('to', to);
+    if (query) params.set('search', query);
 
-    const url = `${API_URL}/validacoes?${params.toString()}`;
-
-    const response = await fetch(url, { signal });
-
-    if (!response.ok) {
-      const payload = await response.json().catch(() => ({}));
-      throw new Error(payload.message || `Erro ao buscar histórico: ${response.status}`);
-    }
-
-    return response.json();
+    const data = await apiRequest(`/validacoes?${params.toString()}`, { signal });
+    return mapHistoryResponse(data);
   },
 
-  /**
-   * Deleta uma validação específica por ID.
-   * @param {string} id - ID da validação a deletar
-   * @returns {Promise} Resposta do servidor
-   */
+  async getValidationDetail(id) {
+    if (!id) {
+      throw new Error('ID da validação é obrigatório');
+    }
+    const data = await apiRequest(`/validacoes/${id}`);
+    return mapValidationResponse(data);
+  },
+
   async deleteValidation(id) {
     if (!id) {
       throw new Error('ID da validação é obrigatório');
     }
-
-    const response = await fetch(`${API_URL}/validacoes/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      const payload = await response.json().catch(() => ({}));
-      throw new Error(
-        payload.message || `Erro ao deletar validação: ${response.status}`
-      );
-    }
-
-    return response.json().catch(() => ({ success: true }));
+    const data = await apiRequest(`/validacoes/${id}`, { method: 'DELETE' });
+    return data ?? { success: true };
   },
 };
 

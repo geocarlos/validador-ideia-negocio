@@ -26,7 +26,7 @@ const ValidationDetail = ({ id }) => {
     return (
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-4xl mx-auto">
-          <BackButton fallbackPath="/validations" />
+          <BackButton fallbackPath="/dashboard" />
 
           <div className="mt-8 flex items-center justify-center">
             <div className="text-center">
@@ -48,7 +48,7 @@ const ValidationDetail = ({ id }) => {
     return (
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-4xl mx-auto">
-          <BackButton fallbackPath="/validations" />
+          <BackButton fallbackPath="/dashboard" />
 
           <div className="mt-8">
             <div className="rounded-lg border border-red-200 bg-red-50 p-6">
@@ -88,7 +88,7 @@ const ValidationDetail = ({ id }) => {
     return (
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-4xl mx-auto">
-          <BackButton fallbackPath="/validations" />
+          <BackButton fallbackPath="/dashboard" />
 
           <div className="mt-8">
             <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center">
@@ -122,16 +122,16 @@ const ValidationDetail = ({ id }) => {
   const {
     id: validationId,
     idea,
+    ideia,
     createdAt,
-    updatedAt,
-    result,
-    score,
-    recommendation,
     summary,
     technicalAnalysis,
     marketAnalysis,
     financialAnalysis,
+    metricas,
   } = data;
+
+  const ideaText = ideia || idea;
 
   // Normalizar dados de data
   const formatDate = (dateString) => {
@@ -149,14 +149,12 @@ const ValidationDetail = ({ id }) => {
     }
   };
 
-  // Preparar dados para AnalysisDashboard
   const analysisData = {
-    technicalAnalysis: technicalAnalysis || result?.technicalAnalysis,
-    marketAnalysis: marketAnalysis || result?.marketAnalysis,
-    financialAnalysis: financialAnalysis || result?.financialAnalysis,
-    summary: summary || result?.summary,
-    score: score || result?.score,
-    recommendation: recommendation || result?.recommendation,
+    technicalAnalysis,
+    marketAnalysis,
+    financialAnalysis,
+    summary,
+    metrics: metricas,
   };
 
   return (
@@ -164,7 +162,7 @@ const ValidationDetail = ({ id }) => {
       <div className="max-w-4xl mx-auto">
         {/* Header com volta */}
         <div className="mb-8">
-          <BackButton fallbackPath="/validations" />
+          <BackButton fallbackPath="/dashboard" />
         </div>
 
         {/* Card de informações gerais */}
@@ -179,18 +177,8 @@ const ValidationDetail = ({ id }) => {
               </p>
             </div>
 
-            {/* Score destacado se existir */}
-            {score !== null && score !== undefined && (
-              <div className="flex items-center gap-3 bg-blue-50 px-4 py-3 rounded-lg border border-blue-200">
-                <div className="text-sm font-medium text-gray-600">Score:</div>
-                <div className="text-2xl font-bold text-blue-600">
-                  {typeof score === 'number' ? score.toFixed(1) : score}
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* Datas */}
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-gray-200">
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
@@ -200,13 +188,13 @@ const ValidationDetail = ({ id }) => {
                 {formatDate(createdAt)}
               </p>
             </div>
-            {updatedAt && (
+            {metricas?.tempo_execucao_ms != null && (
               <div>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                  Atualizada em
+                  Tempo de execução
                 </p>
                 <p className="mt-1 text-sm text-gray-700">
-                  {formatDate(updatedAt)}
+                  {metricas.tempo_execucao_ms}ms
                 </p>
               </div>
             )}
@@ -214,30 +202,18 @@ const ValidationDetail = ({ id }) => {
         </div>
 
         {/* Seção de Ideia Original */}
-        {idea && (
+        {ideaText && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Ideia de Negócio
             </h2>
             <div className="prose prose-sm max-w-none">
               <p className="text-gray-700 whitespace-pre-wrap break-words">
-                {typeof idea === 'string' ? idea : JSON.stringify(idea, null, 2)}
+                {typeof ideaText === 'string'
+                  ? ideaText
+                  : JSON.stringify(ideaText, null, 2)}
               </p>
             </div>
-          </div>
-        )}
-
-        {/* Recomendação destacada se existir */}
-        {recommendation && (
-          <div className="bg-green-50 border-l-4 border-green-500 p-6 mb-8 rounded">
-            <h3 className="text-lg font-semibold text-green-900 mb-2">
-              Recomendação
-            </h3>
-            <p className="text-green-800">
-              {typeof recommendation === 'string'
-                ? recommendation
-                : JSON.stringify(recommendation, null, 2)}
-            </p>
           </div>
         )}
 
@@ -252,7 +228,7 @@ const ValidationDetail = ({ id }) => {
 
         {/* Footer com ação de retorno */}
         <div className="mt-8 flex justify-center">
-          <BackButton fallbackPath="/validations" />
+          <BackButton fallbackPath="/dashboard" />
         </div>
       </div>
     </div>

@@ -1,20 +1,9 @@
 /**
- * useDelete - Hook reutilizável para operações DELETE
- * 
- * Responsabilidades:
- * - Fazer requisição DELETE para qualquer endpoint
- * - Gerenciar loading e error states
- * - Chamar callback de sucesso/erro
- * - Totalmente genérico e reutilizável
- * 
- * @param {string} endpoint - Endpoint a deletar (ex: /validacoes/123)
- * @param {Object} options - Opções
- * @param {function} [options.onSuccess] - Callback após sucesso
- * @param {function} [options.onError] - Callback após erro
- * @returns {Object} { loading, error, deleteItem, clearError }
+ * Hook para DELETE de validações via validationService.
  */
 
 import { useState, useCallback } from 'react';
+import validationService from '../services/validationService';
 
 const useDelete = (endpoint, { onSuccess, onError } = {}) => {
   const [loading, setLoading] = useState(false);
@@ -32,23 +21,8 @@ const useDelete = (endpoint, { onSuccess, onError } = {}) => {
     setError(null);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-      const url = endpoint.startsWith('/') ? `${apiUrl}${endpoint}` : endpoint;
-
-      const response = await fetch(url, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const payload = await response.json().catch(() => ({}));
-        const errorMessage = payload.message || `Erro ao deletar: ${response.status}`;
-        throw new Error(errorMessage);
-      }
-
-      const result = await response.json().catch(() => ({ success: true }));
+      const id = endpoint.split('/').filter(Boolean).pop();
+      const result = await validationService.deleteValidation(id);
 
       setLoading(false);
       onSuccess?.(result);

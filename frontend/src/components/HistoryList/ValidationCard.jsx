@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import DeleteConfirmModal from '../DeleteConfirmModal';
 import useDelete from '../../hooks/useDelete';
 
 export default function ValidationCard({ validation, onDelete }) {
-  const date = validation.createdAt || validation.date || validation.created_at;
-  const title = validation.idea || validation.input || validation.title || 'Validação';
-  const summary = validation.summary || validation.result || validation.outcome || null;
+  const date = validation.createdAt;
+  const title =
+    validation.ideia || validation.idea || validation.title || 'Validação';
+  const summary = validation.summary || null;
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -34,14 +36,21 @@ export default function ValidationCard({ validation, onDelete }) {
                 {typeof summary === 'string' ? summary : JSON.stringify(summary)}
               </div>
             )}
+            {validation.id && (
+              <Link
+                to={`/validations/${validation.id}`}
+                className="inline-block mt-2 text-sm text-blue-600 hover:underline"
+              >
+                Ver detalhes
+              </Link>
+            )}
           </div>
 
           <div className="flex flex-col items-end gap-3 flex-shrink-0">
             <div className="text-xs text-gray-500 whitespace-nowrap">
-              {date ? new Date(date).toLocaleString() : ''}
+              {date ? new Date(date).toLocaleString('pt-BR') : ''}
             </div>
 
-            {/* Botão de deleção */}
             <button
               onClick={() => setShowDeleteModal(true)}
               className="p-2 text-red-600 hover:bg-red-50 rounded transition"
@@ -66,7 +75,6 @@ export default function ValidationCard({ validation, onDelete }) {
         </div>
       </div>
 
-      {/* Modal de confirmação de deleção */}
       <DeleteConfirmModal
         isOpen={showDeleteModal}
         title="Deletar Validação"

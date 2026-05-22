@@ -13,13 +13,8 @@ export default function HistoryList() {
     loading,
     error,
     query,
-    from,
-    to,
     setPage,
-    setPageSize,
     setQuery,
-    setFrom,
-    setTo,
     setFilters,
     refresh,
   } = useHistory({ initialPage: 1, initialPageSize: 10 });
@@ -30,17 +25,15 @@ export default function HistoryList() {
 
       <FilterBar
         query={query}
-        from={from}
-        to={to}
         onQuery={setQuery}
-        onFrom={setFrom}
-        onTo={setTo}
-        onClear={() => setFilters({ query: '', from: '', to: '' })}
+        onClear={() => setFilters({ query: '' })}
       />
 
       {loading && <div className="p-4">Carregando...</div>}
       {error && (
-        <div className="p-4 text-red-600">Erro ao carregar: {error.message}</div>
+        <div className="p-4 text-red-600">
+          Erro ao carregar: {error.message}
+        </div>
       )}
 
       {!loading && !error && items.length === 0 && (
@@ -49,15 +42,20 @@ export default function HistoryList() {
 
       <div className="grid gap-3">
         {items.map((v) => (
-          <ValidationCard 
-            key={v.id || v._id || JSON.stringify(v)} 
+          <ValidationCard
+            key={v.id}
             validation={v}
             onDelete={() => refresh()}
           />
         ))}
       </div>
 
-      <Pagination page={page} pageSize={pageSize} total={total} onChangePage={(p) => setPage(p)} />
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onChangePage={(p) => setPage(p)}
+      />
 
       <div className="mt-3 text-sm text-gray-600">Total: {total}</div>
     </div>
