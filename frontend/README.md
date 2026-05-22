@@ -26,6 +26,8 @@ O frontend comunica-se exclusivamente com o backend em `backend/` via REST JSON.
 | Vite | 5 |
 | React Router | 7 |
 | Tailwind CSS | 3 |
+| HTTP | `fetch` nativo (`apiClient`) |
+| Testes | Vitest 4, React Testing Library, happy-dom |
 | Node | 18+ recomendado |
 
 **Backend:** deve estar rodando (porta padrão **3001**).
@@ -51,9 +53,12 @@ cp .env.example .env.local
 ```bash
 cd frontend
 npm install
-npm run dev      # http://localhost:5173
-npm run build    # produção em dist/
-npm run preview  # preview do build
+npm run dev        # http://localhost:5173
+npm run build      # produção em dist/
+npm run preview    # preview do build
+npm test           # Vitest (watch)
+npm run test:run   # Vitest uma vez — use em CI
+npm run lint       # ESLint
 ```
 
 ### Proxy em desenvolvimento
@@ -225,9 +230,13 @@ ValidationCard [🗑] → DeleteConfirmModal → useDelete
 
 ```
 frontend/
+├── README.md                     ← início rápido e link para esta doc
 ├── docs/
 │   └── README.md                 ← esta documentação
 ├── src/
+│   ├── test/
+│   │   ├── setup.js              ← cleanup RTL + jest-dom
+│   │   └── helpers.js            ← localStorage mock, JWT fake, fixtures API
 │   ├── App.jsx                   ← rotas principais
 │   ├── main.jsx                  ← AuthProvider + render
 │   ├── components/
@@ -253,12 +262,17 @@ frontend/
 │   │   ├── validationService.js
 │   │   └── apiService.js         facade (compat. com exemplos)
 │   ├── utils/
-│   │   └── validationMapper.js
+│   │   ├── validationMapper.js
+│   │   └── validationMapper.test.js
+│   ├── services/
+│   │   ├── *.test.js             ← apiConfig, authService, validationService
 │   └── examples/                 exemplos isolados (não usados em produção)
 ├── .env.example
-├── vite.config.js
+├── vite.config.js                ← proxy dev + config Vitest
 └── package.json
 ```
+
+Arquivos de teste ficam ao lado do código (`*.test.js` / `*.test.jsx`), seguindo o padrão do exemplo em `src/examples/authService.test.example.js`.
 
 ---
 
@@ -357,6 +371,67 @@ Facade para exemplos legados; delega a `validationService` e `authService`. Mét
 
 ---
 
+## Testes automatizados
+
+### Stack
+
+| Ferramenta | Uso |
+|------------|-----|
+| **Vitest** | Runner (API compatível com Jest: `describe`, `it`, `expect`, `vi`) |
+| **@testing-library/react** | Renderização e queries por papel/label |
+| **@testing-library/user-event** | Interações realistas (digitação, clique, blur) |
+| **@testing-library/jest-dom** | Matchers (`toBeInTheDocument`, etc.) |
+| **happy-dom** | Ambiente DOM leve (substitui jsdom por compatibilidade com Vitest 4) |
+
+Configuração em `vite.config.js` (`test.environment`, `setupFiles`, `pool: 'threads'`).
+
+### Executar
+
+```bash
+cd frontend
+npm run test:run    # CI — executa uma vez e encerra
+npm test            # desenvolvimento — modo watch
+```
+
+### Suíte atual
+
+| Arquivo | Função / componente | O que valida |
+|---------|---------------------|--------------|
+| `utils/validationMapper.test.js` | `mapValidationResponse` | `ideia` → `idea`, `consolidado.tecnico` → `technicalAnalysis`, preservação de dados, null/vazio |
+| `services/apiConfig.test.js` | `parseApiError` | Prioridade `details` → `error` → `message` → fallback; payloads reais do backend |
+| `services/authService.test.js` | `getUserFromToken` | JWT fake (sem lib externa), expiração, token inválido/vazio/offline |
+| `services/validationService.test.js` | `validateIdea` | POST `/validar`, body `{ ideia }`, headers `Authorization` e `Content-Type`, erros de rede e HTTP |
+| `components/IdeaForm/IdeaForm.test.jsx` | `IdeaForm` | Mínimo 20 caracteres, submit bloqueado quando inválido, correção remove erro, submit chama validação |
+
+### Padrões de teste
+
+- **Mocks:** `vi.fn()` / `vi.stubGlobal('fetch')` para HTTP; `installLocalStorageMock()` em `src/test/helpers.js` para sessão.
+- **Isolamento:** `clearMocks` e `restoreMocks` no Vitest; `cleanup()` do RTL após cada teste em `src/test/setup.js`.
+- **Componentes:** hooks e filhos pesados mockados (`useValidation`, `AnalysisDashboard`) para testar comportamento do formulário, não implementação interna.
+- **Sem chamadas reais à API** nos testes unitários.
+
+### Exemplo de JWT fake (helpers)
+
+```js
+import { createFakeJwt, installLocalStorageMock } from '../test/helpers';
+
+const token = createFakeJwt({
+  userId: 'user-1',
+  email: 'dev@example.com',
+  exp: Math.floor(Date.now() / 1000) + 3600,
+});
+localStorage.setItem('auth_token', token);
+```
+
+### Adicionar novos testes
+
+1. Crie `*.test.js` ou `*.test.jsx` ao lado do módulo.
+2. Reutilize `src/test/helpers.js` para JWT, `localStorage` e fixtures de erro (`apiErrorFixtures`).
+3. Para componentes, prefira queries acessíveis (`getByLabelText`, `getByRole`).
+4. Rode `npm run test:run` antes de abrir PR.
+
+---
+
 ## Pasta `examples/`
 
 Arquivos de referência **não importados** pelo `App.jsx` de produção:
@@ -426,6 +501,7 @@ Se falhar, confira imports e variáveis `import.meta.env`.
 - [ ] “Ver detalhes” abre `/validations/:id`
 - [ ] Excluir item atualiza a lista
 - [ ] DevTools → Network: `Authorization` e body `{ ideia }` corretos
+- [ ] `npm run test:run` passa localmente
 
 ---
 
@@ -433,10 +509,13 @@ Se falhar, confira imports e variáveis `import.meta.env`.
 
 - Rota dedicada `/validations` só para histórico
 - Testes E2E (Playwright) contra API real
+- Workflow CI executando `npm run test:run` no frontend
+- Cobertura de código (`@vitest/coverage-v8`)
 - Tipagem TypeScript compartilhada com OpenAPI
 - Exportar PDF do detalhe da validação
 - Filtro por data no backend + UI
+- Revalidação do `useForm` em tempo real ao digitar (UX do `IdeaForm`)
 
 ---
 
-**Última atualização:** maio/2026 — alinhado com a API do backend em `backend/src/routes/`.
+**Última atualização:** maio/2026 — inclui suíte Vitest (28 testes) e alinhamento com a API em `backend/src/routes/`.
