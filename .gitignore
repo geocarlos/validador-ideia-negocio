@@ -1,0 +1,4 @@
+frontend/node_modules/
+frontend/.vite/
+frontend/.env.local
+node_modules/
