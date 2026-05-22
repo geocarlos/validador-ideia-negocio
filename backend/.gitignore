@@ -9,8 +9,6 @@ yarn-error.log*
 
 /prisma/migrations/
 
-.env.example
-
 coverage/
 jest-html-report/
 
@@ -18,3 +16,4 @@ jest-html-report/
 Thumbs.db
 .vscode/
 .idea/
+.env
