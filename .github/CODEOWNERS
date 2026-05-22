@@ -1,0 +1,19 @@
+# CODEOWNERS gerado a partir do mapa de ownership fornecido
+
+# geocarlos
+/backend/src/agents @geocarlos
+/backend/src/orchestrator @geocarlos
+/.github @geocarlos
+* @geocarlos
+
+# vhasckel
+/frontend @vhasckel
+/docs/ @vhasckel
+/prompts/ @vhasckel
+
+# Luizbernardi
+/backend/src/middleware @luizbernardi
+/backend/src/prisma @luizbernardi
+/backend/src/routes @luizbernardi
+/backend/src/services @luizbernardi
+/backend/tests @luizbernardi
