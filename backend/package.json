@@ -1,7 +1,7 @@
 {
   "name": "validador-ideia-negocio-backend",
   "version": "1.0.0",
-  "description": "Backend do Validador de Ideia de Negócio",
+  "description": "Backend do Validador de Ideia de Negocio",
   "main": "src/app.js",
   "scripts": {
     "dev": "nodemon src/app.js",
@@ -14,8 +14,10 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "openai": "^6.39.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "jest": "^29.7.0",
@@ -25,7 +27,11 @@
   },
   "jest": {
     "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup/openai.mock.js"
+    ],
     "testMatch": [
+      "<rootDir>/src/**/*.test.js",
       "**/tests/**/*.test.js",
       "**/__tests__/**/*.test.js"
     ]
