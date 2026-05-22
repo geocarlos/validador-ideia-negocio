@@ -1,11 +1,19 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const fs = require('fs');
+const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('../swagger');
 const routes = require('./routes');
 
-dotenv.config();
+// Prefer loading .env.local (developer overrides) if it exists, otherwise fall back to default .env
+const localEnvPath = path.resolve(__dirname, '..', '.env.local');
+if (fs.existsSync(localEnvPath)) {
+  dotenv.config({ path: localEnvPath });
+} else {
+  dotenv.config();
+}
 
 const app = express();
 
