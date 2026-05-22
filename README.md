@@ -250,7 +250,7 @@ O contrato completo da API está em [docs/api/openapi.yaml](docs/api/openapi.yam
 | Prefixo | Uso |
 |---|---|
 | `main` | Código estável e revisado |
-| `feat/<descricao>` | Nova funcionalidade |
+| `feature/<descricao>` | Nova funcionalidade (ex: `feature/tests-docs`) |
 | `fix/<descricao>` | Correção de bug |
 | `docs/<descricao>` | Documentação |
 | `test/<descricao>` | Adição ou ajuste de testes |
