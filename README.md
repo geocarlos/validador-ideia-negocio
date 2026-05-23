@@ -2,6 +2,8 @@
 
 Sistema de IA multiagente que fornece **análise instantânea e estruturada** de ideias de negócio em três dimensões especializadas: mercado, viabilidade técnica e viabilidade financeira.
 
+![Preview](./docs/validador_ideia_negocio.gif)
+
 ---
 
 ## Sumário
