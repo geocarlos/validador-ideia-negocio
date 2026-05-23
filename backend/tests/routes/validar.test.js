@@ -125,4 +125,57 @@ describe('Validation Routing Tests', () => {
 
     expect(checkRes.statusCode).toBe(404);
   });
+
+  it('deve retornar 500 para erro genérico em POST /api/validar', async () => {
+    const validationService = require('../../src/services/validationService');
+    jest.spyOn(validationService, 'validarIdeia').mockRejectedValueOnce(new Error('Generic Error'));
+    const res = await request(app)
+      .post('/api/validar')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ ideia: 'Uma ideia inovadora para gerar um erro de teste no nosso servidor de validacao' });
+    
+    expect(res.statusCode).toBe(500);
+  });
+
+  it('deve retornar 500 para erro genérico em GET /api/validacoes', async () => {
+    const validationService = require('../../src/services/validationService');
+    jest.spyOn(validationService, 'listarHistorico').mockRejectedValueOnce(new Error('Generic Error'));
+    const res = await request(app)
+      .get('/api/validacoes')
+      .set('Authorization', `Bearer ${token}`);
+    
+    expect(res.statusCode).toBe(500);
+  });
+
+  it('deve retornar 500 para erro genérico em GET /api/validacoes/:id', async () => {
+    const validationService = require('../../src/services/validationService');
+    jest.spyOn(validationService, 'obterPorId').mockRejectedValueOnce(new Error('Generic Error'));
+    const res = await request(app)
+      .get(`/api/validacoes/${createdValidationId}`)
+      .set('Authorization', `Bearer ${token}`);
+    
+    expect(res.statusCode).toBe(500);
+  });
+
+  it('deve retornar 404 para erro de statusCode em DELETE /api/validacoes/:id', async () => {
+    const validationService = require('../../src/services/validationService');
+    const errorWithStatus = new Error('Not found mock');
+    errorWithStatus.statusCode = 404;
+    jest.spyOn(validationService, 'deletarValidacao').mockRejectedValueOnce(errorWithStatus);
+    const res = await request(app)
+      .delete(`/api/validacoes/${createdValidationId}`)
+      .set('Authorization', `Bearer ${token}`);
+    
+    expect(res.statusCode).toBe(404);
+  });
+
+  it('deve retornar 500 para erro genérico em DELETE /api/validacoes/:id', async () => {
+    const validationService = require('../../src/services/validationService');
+    jest.spyOn(validationService, 'deletarValidacao').mockRejectedValueOnce(new Error('Generic Error'));
+    const res = await request(app)
+      .delete(`/api/validacoes/${createdValidationId}`)
+      .set('Authorization', `Bearer ${token}`);
+    
+    expect(res.statusCode).toBe(500);
+  });
 });
