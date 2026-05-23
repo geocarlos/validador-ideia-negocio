@@ -35,5 +35,8 @@
       "**/tests/**/*.test.js",
       "**/__tests__/**/*.test.js"
     ]
+  },
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
   }
 }
